@@ -13,15 +13,18 @@ document.querySelectorAll('.case-hero-mute').forEach(btn => {
   });
 });
 
-// Navbar scroll effect
+document.querySelectorAll('.logo-cell').forEach((el, i) => {
+  el.style.setProperty('--logo-i', String(i));
+});
+
+// Navbar: se compacta y pasa a azul 90% para que se lean las fotos debajo.
 const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 20) {
-    navbar.style.paddingTop = '16px';
-  } else {
-    navbar.style.paddingTop = '33px';
-  }
-}, { passive: true });
+const syncNavbarScroll = () => {
+  if (!navbar) return;
+  navbar.classList.toggle('is-scrolled', window.scrollY > 20);
+};
+window.addEventListener('scroll', syncNavbarScroll, { passive: true });
+syncNavbarScroll();
 
 // Mobile nav menu
 const menuToggle = document.querySelector('.navbar-menu-toggle');
@@ -104,17 +107,11 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-// Section reveal on scroll (incluye el wordmark "ON THE ROCKS." del footer,
-// que hasta ahora aparecía sin ninguna animación de entrada)
+// Section reveal on scroll
 const revealTargets = document.querySelectorAll(
   '.section-work .work-inner, .section-portfolio .portfolio-inner, .section-service .service-inner, .section-trusted .trusted-inner, .section-faq .faq-inner, .section-contact .contact-inner'
 );
 revealTargets.forEach(el => el.classList.add('reveal'));
-
-// .contact-logotype ya trae su propio estado inicial/visible en CSS,
-// no necesita la clase genérica .reveal — solo que este observer le agregue is-visible.
-const logotypeTargets = document.querySelectorAll('.contact-logotype');
-const allRevealTargets = [...revealTargets, ...logotypeTargets];
 
 if ('IntersectionObserver' in window) {
   const io = new IntersectionObserver((entries) => {
@@ -126,9 +123,176 @@ if ('IntersectionObserver' in window) {
     });
   }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
-  allRevealTargets.forEach(el => io.observe(el));
+  revealTargets.forEach(el => io.observe(el));
 } else {
-  allRevealTargets.forEach(el => el.classList.add('is-visible'));
+  revealTargets.forEach(el => el.classList.add('is-visible'));
+}
+
+const prefersReducedMotion = () =>
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const isMobileMotion = () => window.matchMedia('(max-width: 768px)').matches;
+
+const getScrollY = () => {
+  const vv = window.visualViewport;
+  return window.scrollY
+    || document.documentElement.scrollTop
+    || document.body.scrollTop
+    || (vv && vv.pageTop)
+    || 0;
+};
+
+const getViewportBox = (el) => {
+  const rect = el.getBoundingClientRect();
+  const native = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+  const scrollY = getScrollY();
+  if (native === 0 && scrollY > 0) {
+    return { top: rect.top - scrollY, height: rect.height, bottom: rect.bottom - scrollY };
+  }
+  return { top: rect.top, height: rect.height, bottom: rect.bottom };
+};
+
+// Footer wordmark — wipe ligado al scroll (Wolff Olins).
+// El logotipo está al fondo de la página: el reveal corre mientras entra
+// por el borde inferior, no cuando cruza el tercio superior del viewport.
+const supportsViewTimeline = CSS.supports && CSS.supports('animation-timeline', 'view()');
+const wordmarks = document.querySelectorAll('.contact-logotype');
+const updateWordmarkReveal = () => {
+  if (supportsViewTimeline) return;
+  const reduced = prefersReducedMotion();
+  const vh = window.innerHeight;
+  wordmarks.forEach(el => {
+    if (reduced) {
+      el.style.setProperty('--wordmark-reveal', '1');
+      return;
+    }
+    const box = getViewportBox(el);
+    const h = box.height || 124;
+    const start = vh + 12;
+    const end = vh - h;
+    const progress = (start - box.top) / (start - end);
+    el.style.setProperty('--wordmark-reveal', String(Math.min(1, Math.max(0, progress))));
+  });
+};
+
+// About — pin + translateX de los 3 bloques de valores
+const valuesPin = document.querySelector('.about-values-pin');
+const valuesTrack = document.querySelector('.about-values-track');
+const updateAboutValues = () => {
+  if (!valuesPin || !valuesTrack) return;
+  if (prefersReducedMotion() || isMobileMotion()) {
+    valuesTrack.style.transform = '';
+    return;
+  }
+  const box = getViewportBox(valuesPin);
+  const stickyTop = 110;
+  const travel = valuesPin.offsetHeight - (window.innerHeight - stickyTop);
+  if (travel <= 0) {
+    valuesTrack.style.transform = '';
+    return;
+  }
+  const progress = Math.min(1, Math.max(0, (stickyTop - box.top) / travel));
+  const maxX = Math.max(0, valuesTrack.scrollWidth - window.innerWidth);
+  valuesTrack.style.transform = `translate3d(${-maxX * progress}px, 0, 0)`;
+};
+
+let motionTick = false;
+const runMotion = () => {
+  updateWordmarkReveal();
+  updateAboutValues();
+  motionTick = false;
+};
+const requestMotionTick = () => {
+  if (motionTick) return;
+  motionTick = true;
+  requestAnimationFrame(runMotion);
+};
+
+window.addEventListener('scroll', requestMotionTick, { passive: true });
+document.addEventListener('scroll', requestMotionTick, { passive: true });
+window.addEventListener('resize', requestMotionTick);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('scroll', requestMotionTick, { passive: true });
+  window.visualViewport.addEventListener('resize', requestMotionTick);
+}
+runMotion();
+
+// About — typewriter de la visión (conserva .about-accent)
+const visionType = document.querySelector('.about-vision-text[data-typewriter]');
+if (visionType && !prefersReducedMotion()) {
+  const source = visionType.cloneNode(true);
+  const spoken = visionType.textContent.replace(/\s+/g, ' ').trim();
+  visionType.setAttribute('aria-label', spoken);
+  visionType.textContent = '';
+
+  const parts = [];
+  source.childNodes.forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const value = node.textContent.replace(/\s+/g, ' ');
+      if (value && value !== ' ') parts.push({ className: '', value });
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const value = node.textContent.replace(/\s+/g, ' ');
+      if (value && value !== ' ') parts.push({ className: node.className || '', value });
+    }
+  });
+  if (parts[0]) parts[0].value = parts[0].value.replace(/^\s+/, '');
+  const last = parts[parts.length - 1];
+  if (last) last.value = last.value.replace(/\s+$/, '');
+
+  const caret = document.createElement('span');
+  caret.className = 'about-typewriter-caret';
+  caret.setAttribute('aria-hidden', 'true');
+  visionType.appendChild(caret);
+
+  let partIdx = 0;
+  let charIdx = 0;
+  let current = null;
+
+  const typeNext = () => {
+    if (partIdx >= parts.length) {
+      caret.remove();
+      return;
+    }
+    const part = parts[partIdx];
+    if (!current) {
+      if (part.className) {
+        current = document.createElement('span');
+        current.className = part.className;
+      } else {
+        current = document.createTextNode('');
+      }
+      visionType.insertBefore(current, caret);
+    }
+    const next = part.value.charAt(charIdx);
+    if (current.nodeType === Node.TEXT_NODE) {
+      current.textContent += next;
+    } else {
+      current.textContent += next;
+    }
+    charIdx += 1;
+    if (charIdx >= part.value.length) {
+      partIdx += 1;
+      charIdx = 0;
+      current = null;
+    }
+    window.setTimeout(typeNext, next === ' ' ? 8 : 18);
+  };
+
+  const startTypewriter = () => {
+    if ('IntersectionObserver' in window) {
+      const tio = new IntersectionObserver((entries) => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          tio.disconnect();
+          typeNext();
+        }
+      }, { threshold: 0.28 });
+      tio.observe(visionType);
+    } else {
+      typeNext();
+    }
+  };
+
+  startTypewriter();
 }
 
 // Portfolio page filters

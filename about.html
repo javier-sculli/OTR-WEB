@@ -18,7 +18,7 @@
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://www.ontherocks.com.ar/about.html" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="stylesheet" href="css/style.css?v=17" />
+  <link rel="stylesheet" href="css/style.css?v=23" />
 </head>
 <body class="page-about">
 
@@ -51,7 +51,9 @@
 
     <!-- HERO -->
     <section class="about-hero">
-      <div class="about-hero-bg" style="background-image:url('images/about/hero-about.jpg');"></div>
+      <video class="about-hero-video" autoplay muted loop playsinline poster="images/about/hero-about.jpg" aria-hidden="true">
+        <source src="video/casos/aff-1.mp4" type="video/mp4" />
+      </video>
       <div class="about-hero-gradient"></div>
       <div class="about-hero-inner">
         <h1 class="about-hero-title">Somos <span>On The Rocks</span></h1>
@@ -72,50 +74,31 @@
     <section class="about-vision" id="vision">
       <div class="about-inner">
         <p class="about-label about-label--blue">001&nbsp;&nbsp;VISIÓN</p>
-        <p class="about-vision-text">
+        <p class="about-vision-text" data-typewriter>
           Ser la agencia de referencia en LATAM para las compañías que están dando forma al mañana y buscan crecer exponencialmente, diferenciándonos por la calidad, la honestidad y el impacto tangible
           <span class="about-accent">de las estrategias de comunicación que elaboramos y ejecutamos</span>, sin perder el factor humano.
         </p>
       </div>
     </section>
 
-    <!-- VALUES (staggered) -->
+    <!-- VALUES — pin + scroll horizontal (Mobile First) -->
     <section class="about-values">
-      <div class="about-inner about-values-grid">
-        <article class="about-value about-value--1">
-          <h2 class="about-value-title">Empresas que están dando forma al mañana</h2>
-          <p class="about-value-body">Proyectos que buscan resolver problemas de escala global, apalancados en ciencia y tecnología de frontera.</p>
-        </article>
-        <article class="about-value about-value--2">
-          <h2 class="about-value-title">LATAM no es un límite geográfico</h2>
-          <p class="about-value-body">No es fácil que una agencia latina tenga impacto en el mercado de USA con clientes locales. Sin embargo, hay una oportunidad enorme de hacerlo junto a founders latinos que ya están haciendo cosas increíbles y que ya están operando en USA o pronto lo estarán.</p>
-        </article>
-        <article class="about-value about-value--3">
-          <h2 class="about-value-title">Calidad e impacto tangible</h2>
-          <p class="about-value-body">No vendemos humo ni prometemos lo que no podemos cumplir. Somos claros, realistas y transparentes con nuestros clientes.</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- 002 MISIÓN -->
-    <section class="about-mission" id="mision">
-      <div class="about-inner">
-        <p class="about-label">002&nbsp;&nbsp;MISIÓN</p>
-        <h2 class="about-mission-title">Crear y ejecutar estrategias de comunicación con visión de negocio para compañías de base tecnológica.</h2>
-
-        <div class="about-pillars">
-          <article class="about-pillar">
-            <h3 class="about-pillar-title">Comunicación con foco estratégico</h3>
-            <p class="about-pillar-body">Nos involucramos a fondo en cada proyecto, como un socio más, y diseñamos estrategias de comunicación alineadas a objetivos concretos.</p>
-          </article>
-          <article class="about-pillar">
-            <h3 class="about-pillar-title">Agnósticos de los canales</h3>
-            <p class="about-pillar-body">Usamos los formatos y canales necesarios para generar resultados reales.</p>
-          </article>
-          <article class="about-pillar">
-            <h3 class="about-pillar-title">Empresas de base tecnológica</h3>
-            <p class="about-pillar-body">Trabajamos con empresas de industrias tecnológicas —como fintech, deeptech, spacetech y healthtech, entre otras— y con organizaciones vinculadas a políticas públicas, en entornos complejos y regulados.</p>
-          </article>
+      <div class="about-values-pin">
+        <div class="about-values-sticky">
+          <div class="about-values-track">
+            <article class="about-value">
+              <h2 class="about-value-title">Empresas que están dando forma al mañana</h2>
+              <p class="about-value-body">Proyectos que buscan resolver problemas de escala global, apalancados en ciencia y tecnología de frontera.</p>
+            </article>
+            <article class="about-value">
+              <h2 class="about-value-title">LATAM no es un límite geográfico</h2>
+              <p class="about-value-body">No es fácil que una agencia latina tenga impacto en el mercado de USA con clientes locales. Sin embargo, hay una oportunidad enorme de hacerlo junto a founders latinos que ya están haciendo cosas increíbles y que ya están operando en USA o pronto lo estarán.</p>
+            </article>
+            <article class="about-value">
+              <h2 class="about-value-title">Calidad e impacto tangible</h2>
+              <p class="about-value-body">No vendemos humo ni prometemos lo que no podemos cumplir. Somos claros, realistas y transparentes con nuestros clientes.</p>
+            </article>
+          </div>
         </div>
       </div>
     </section>
@@ -138,70 +121,67 @@
         <p class="about-label">003&nbsp;&nbsp;ABOUT US</p>
         <h2 class="about-team-title">El equipo detrás de On The Rocks</h2>
 
-        <article class="about-founder">
-          <div class="about-founder-photo" style="background-image:url('images/about/team-joaquin.jpg');" role="img" aria-label="Joaquín Tagle"></div>
-          <div class="about-founder-copy">
-            <h3 class="about-founder-name">Joaquín Tagle</h3>
-            <p class="about-founder-role">Founder &amp; CEO</p>
-          </div>
-        </article>
-
         <div class="about-team-grid">
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-manuela.jpg');" role="img" aria-label="Manuela Ghitta"></div>
-            <h4 class="about-member-name">Manuela Ghitta</h4>
+          <a class="about-member" href="https://www.linkedin.com/in/joaquinmariatagle/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-joaquin.jpg?v=3');" role="img" aria-label="Joaquín Tagle"></div>
+            <h3 class="about-member-name">Joaquín Tagle</h3>
+            <p class="about-member-role">Founder &amp; CEO</p>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/manuela-ghitta/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-manuela.jpg?v=3');" role="img" aria-label="Manuela Ghitta"></div>
+            <h3 class="about-member-name">Manuela Ghitta</h3>
             <p class="about-member-role">Directora de operaciones</p>
-          </article>
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-paloma.jpg');" role="img" aria-label="Paloma Ascurdía"></div>
-            <h4 class="about-member-name">Paloma Ascurdía</h4>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/paloma-ascurd%C3%ADa-233137114/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-paloma.jpg?v=3');" role="img" aria-label="Paloma Ascurdía"></div>
+            <h3 class="about-member-name">Paloma Ascurdía</h3>
             <p class="about-member-role">Directora de comunicación</p>
-          </article>
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-georgina.jpg');" role="img" aria-label="Georgina Grennon"></div>
-            <h4 class="about-member-name">Georgina Grennon</h4>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/georgina-grennon/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-georgina.jpg?v=3');" role="img" aria-label="Georgina Grennon"></div>
+            <h3 class="about-member-name">Georgina Grennon</h3>
             <p class="about-member-role">Directora de comunicación</p>
-          </article>
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-shaiel.jpg');" role="img" aria-label="Shaiel Terán"></div>
-            <h4 class="about-member-name">Shaiel Terán</h4>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/shaielteranvelazquez/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-shaiel.jpg?v=3');" role="img" aria-label="Shaiel Terán"></div>
+            <h3 class="about-member-name">Shaiel Terán</h3>
             <p class="about-member-role">Content Manager</p>
-          </article>
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-sofia-c.jpg');" role="img" aria-label="Sofía Chaieb"></div>
-            <h4 class="about-member-name">Sofía Chaieb</h4>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/sofia-chaieb/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-sofia-c.jpg?v=3');" role="img" aria-label="Sofía Chaieb"></div>
+            <h3 class="about-member-name">Sofía Chaieb</h3>
             <p class="about-member-role">Content Manager</p>
-          </article>
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-agustina.jpg');" role="img" aria-label="Agustina Ackerman"></div>
-            <h4 class="about-member-name">Agustina Ackerman</h4>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/agustina-ackerman/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-agustina.jpg?v=3');" role="img" aria-label="Agustina Ackerman"></div>
+            <h3 class="about-member-name">Agustina Ackerman</h3>
             <p class="about-member-role">Contenidista</p>
-          </article>
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-natalia.jpg');" role="img" aria-label="Natalia Heit"></div>
-            <h4 class="about-member-name">Natalia Heit</h4>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/nataliaheit/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-natalia.jpg?v=3');" role="img" aria-label="Natalia Heit"></div>
+            <h3 class="about-member-name">Natalia Heit</h3>
             <p class="about-member-role">Head of Design</p>
-          </article>
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-sofia-o.jpg');" role="img" aria-label="Sofía Ottonello"></div>
-            <h4 class="about-member-name">Sofía Ottonello</h4>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/sofia-ottonello/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-sofia-o.jpg?v=3');" role="img" aria-label="Sofía Ottonello"></div>
+            <h3 class="about-member-name">Sofía Ottonello</h3>
             <p class="about-member-role">Diseñadora gráfica</p>
-          </article>
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-nahuel.jpg');" role="img" aria-label="Nahuel Silvestro"></div>
-            <h4 class="about-member-name">Nahuel Silvestro</h4>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/nsilvestro/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-nahuel.jpg?v=3');" role="img" aria-label="Nahuel Silvestro"></div>
+            <h3 class="about-member-name">Nahuel Silvestro</h3>
             <p class="about-member-role">Editor audiovisual</p>
-          </article>
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-santiago.jpg');" role="img" aria-label="Santiago Guglielmi"></div>
-            <h4 class="about-member-name">Santiago Guglielmi</h4>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/santiago-guglielmi/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-santiago.jpg?v=3');" role="img" aria-label="Santiago Guglielmi"></div>
+            <h3 class="about-member-name">Santiago Guglielmi</h3>
             <p class="about-member-role">PR Manager</p>
-          </article>
-          <article class="about-member">
-            <div class="about-member-photo" style="background-image:url('images/about/team-guadalupe.jpg');" role="img" aria-label="Guadalupe Reinoso"></div>
-            <h4 class="about-member-name">Guadalupe Reinoso</h4>
+          </a>
+          <a class="about-member" href="https://www.linkedin.com/in/guadalupe-reinoso/" target="_blank" rel="noopener noreferrer">
+            <div class="about-member-photo" style="background-image:url('images/about/team-guadalupe.jpg?v=3');" role="img" aria-label="Guadalupe Reinoso"></div>
+            <h3 class="about-member-name">Guadalupe Reinoso</h3>
             <p class="about-member-role">Ejecutiva de cuentas PR</p>
-          </article>
+          </a>
         </div>
       </div>
     </section>
@@ -237,6 +217,6 @@
     </div>
   </section>
 
-  <script src="js/main.js?v=17"></script>
+  <script src="js/main.js?v=23"></script>
 </body>
 </html>

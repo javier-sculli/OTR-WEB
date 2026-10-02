@@ -56,6 +56,11 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 110px;
+  overscroll-behavior-y: none;
+}
+
+html:has(.page-home) {
+  background: #15141D;
 }
 
 section[id],
@@ -93,6 +98,11 @@ body {
   color: #15141D;
   width: 100%;
   overflow-x: hidden;
+  overscroll-behavior-y: none;
+}
+
+body.page-home {
+  background: #15141D;
 }
 
 a {
@@ -122,6 +132,11 @@ img {
   justify-content: center;
   padding-top: 33px;
   pointer-events: none;
+  transition: padding-top 0.28s ease;
+}
+
+.navbar.is-scrolled {
+  padding-top: 16px;
 }
 
 .navbar-pill {
@@ -135,6 +150,11 @@ img {
   padding: 0 34px 0 34px;
   pointer-events: all;
   animation: navDrop 0.7s ease-out both;
+  transition: background 0.35s ease;
+}
+
+.navbar.is-scrolled .navbar-pill {
+  background: rgba(1, 72, 233, 0.9);
 }
 
 @keyframes navDrop {
@@ -280,7 +300,8 @@ img {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-video {
+  .hero-video,
+  .about-hero-video {
     display: none;
   }
 }
@@ -423,8 +444,6 @@ img {
   transition: color 0.3s ease;
 }
 
-.work-heading:hover .work-heading-line1,
-.work-heading:hover .work-heading-line2,
 .work-heading:hover .work-heading-line3 {
   color: var(--otr-blue-link);
 }
@@ -453,8 +472,9 @@ img {
 }
 
 .portfolio-inner {
-  max-width: 1280px;
-  margin: 0 auto;
+  max-width: none;
+  width: 100%;
+  margin: 0;
   padding: 0;
   position: relative;
 }
@@ -501,13 +521,13 @@ img {
   text-decoration: none;
 }
 
-/* TOP ROW widths: 3 equal columns from 1280px = ~426.67px each */
-.pcard-1 { width: calc(1280px / 3); }
-.pcard-2 { width: calc(1280px / 3); }
-.pcard-3 { width: calc(1280px / 3); }
+/* TOP ROW: 3 columnas a todo el viewport (Figma 0 / 426 / 852) */
+.pcard-1,
+.pcard-2,
+.pcard-3 { width: 33.333%; }
 
-/* BOTTOM ROW widths: card4 = 427px, card5 = 853px */
-.pcard-4 { width: 427px; }
+/* BOTTOM ROW: ARGY 1/3, ByBit 2/3 */
+.pcard-4 { width: 33.333%; }
 .pcard-5 { flex: 1; }
 
 /* ---- CARD BACKGROUND ---- */
@@ -957,8 +977,14 @@ a.scard {
   width: auto;
   height: auto;
   object-fit: contain;
-  /* Logos are already white from Figma — no filter needed */
   opacity: 0.85;
+  animation: logoDrift 7.5s ease-in-out infinite;
+  animation-delay: calc(var(--logo-i, 0) * 0.18s);
+}
+
+@keyframes logoDrift {
+  0%, 100% { opacity: 0.7; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-5px); }
 }
 
 /* Text-only logo cells */
@@ -1248,15 +1274,8 @@ a.scard {
   height: 124px;
   display: flex;
   align-items: flex-end;
-  /* Animación final del wordmark al entrar en vista — referencia: footer de wolffolins.com */
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.9s ease, transform 0.9s ease;
-}
-
-.contact-logotype.is-visible {
-  opacity: 1;
-  transform: translateY(0);
+  overflow: hidden;
+  clip-path: inset(calc((1 - var(--wordmark-reveal, 0)) * 100%) 0 0 0);
 }
 
 .contact-logotype img {
@@ -1265,6 +1284,33 @@ a.scard {
   object-fit: cover;
   object-position: left center;
   display: block;
+  transform: translateY(calc((1 - var(--wordmark-reveal, 0)) * 28px));
+}
+
+@supports (animation-timeline: view()) {
+  .contact-logotype {
+    clip-path: inset(100% 0 0 0);
+    animation: otrWordmarkReveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 100%;
+  }
+
+  .contact-logotype img {
+    transform: translateY(28px);
+    animation: otrWordmarkLift linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 100%;
+  }
+}
+
+@keyframes otrWordmarkReveal {
+  from { clip-path: inset(100% 0 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes otrWordmarkLift {
+  from { transform: translateY(28px); }
+  to { transform: translateY(0); }
 }
 
 /* Reveal on scroll */
@@ -1290,9 +1336,50 @@ a.scard {
   }
 
   .contact-logotype {
-    transition: none !important;
-    opacity: 1 !important;
+    clip-path: none !important;
+    animation: none !important;
+  }
+
+  .contact-logotype img {
     transform: none !important;
+    animation: none !important;
+  }
+
+  .logo-cell img {
+    animation: none !important;
+  }
+
+  .page-service .svc-block {
+    position: relative !important;
+    top: auto !important;
+    min-height: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .about-values-pin {
+    height: auto !important;
+  }
+
+  .about-values-sticky {
+    position: static !important;
+    height: auto !important;
+  }
+
+  .about-values-track {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 48px;
+    padding: 80px;
+    transform: none !important;
+  }
+
+  .about-value {
+    flex: none;
+    width: min(560px, 100%);
+  }
+
+  .about-typewriter-caret {
+    display: none !important;
   }
 
   /* Keep the functional end-state (X shape, pressed scale) but drop the
@@ -1313,15 +1400,11 @@ a.scard {
 }
 
 .navbar-solid {
-  position: relative;
-  background: #15141D;
-  padding: 24px 0 28px;
   pointer-events: none;
 }
 
 .navbar-solid .navbar-pill {
   margin: 0 auto;
-  animation: none;
 }
 
 .navbar-links a.is-active {
@@ -1341,11 +1424,38 @@ a.scard {
   background: #D9D9D9;
 }
 
+.page-service main {
+  padding-top: 80px;
+}
+
+.page-service .svc-block {
+  position: sticky;
+  top: 110px;
+  min-height: calc(100vh - 110px);
+  box-shadow: 0 -16px 40px rgba(21, 20, 29, 0.08);
+}
+
+.page-service .svc-block:nth-child(1) { z-index: 1; }
+.page-service .svc-block:nth-child(2) { z-index: 2; }
+.page-service .svc-block:nth-child(3) { z-index: 3; }
+.page-service .svc-block:nth-child(4) { z-index: 4; }
+.page-service .svc-block:nth-child(5) { z-index: 5; }
+
 .svc-inner {
   max-width: 1280px;
   margin: 0 auto;
   padding: 100px 80px 110px;
 }
+
+.page-service .svc-title {
+  position: sticky;
+  top: 126px;
+  z-index: 2;
+  padding: 8px 0 16px;
+}
+
+.page-service .svc-block--white .svc-title { background: #FFFFFF; }
+.page-service .svc-block--gray .svc-title { background: #D9D9D9; }
 
 .svc-title {
   font-family: 'Clash Grotesk', sans-serif;
@@ -1444,6 +1554,15 @@ a.scard {
   opacity: 0.7;
 }
 
+.about-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.7;
+}
+
 .about-hero-gradient {
   position: absolute;
   inset: 0;
@@ -1497,7 +1616,6 @@ a.scard {
 .about-intro {
   background: #F5F5F0;
   padding: 90px 0;
-  text-align: center;
 }
 
 .about-intro-text {
@@ -1506,8 +1624,8 @@ a.scard {
   font-size: 28px;
   line-height: 1.4;
   color: #15141D;
-  max-width: 860px;
-  margin: 0 auto;
+  max-width: 980px;
+  margin: 0 0 0 64px;
 }
 
 .about-intro-text strong {
@@ -1535,13 +1653,30 @@ a.scard {
 
 .about-values {
   background: #F5F5F0;
-  padding: 100px 0;
 }
 
-.about-values-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 72px 100px;
+.about-values-pin {
+  height: 280vh;
+}
+
+.about-values-sticky {
+  position: sticky;
+  top: 110px;
+  height: calc(100vh - 110px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.about-values-track {
+  display: flex;
+  gap: 56px;
+  padding: 0 80px;
+  will-change: transform;
+}
+
+.about-value {
+  flex: 0 0 min(560px, 72vw);
 }
 
 .about-value-title {
@@ -1566,19 +1701,18 @@ a.scard {
   max-width: 480px;
 }
 
-.about-value--2 {
-  grid-column: 1;
+.about-typewriter-caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.85em;
+  margin-left: 3px;
+  background: #0148E9;
+  vertical-align: -0.08em;
+  animation: typeCaret 0.7s steps(1) infinite;
 }
 
-.about-value--3 {
-  grid-column: 2;
-  grid-row: 2;
-  justify-self: end;
-  text-align: right;
-}
-
-.about-value--3 .about-value-body {
-  margin-left: auto;
+@keyframes typeCaret {
+  50% { opacity: 0; }
 }
 
 .about-mission {
@@ -1667,51 +1801,26 @@ a.scard {
   margin: 0 0 48px;
 }
 
-.about-founder {
-  display: flex;
-  align-items: flex-end;
-  gap: 28px;
-  margin-bottom: 64px;
-}
-
-.about-founder-photo {
-  width: 200px;
-  height: 240px;
-  border-radius: 12px;
-  background: #D8D8D8 center / cover no-repeat;
-  flex-shrink: 0;
-}
-
-.about-founder-name {
-  font-family: 'Clash Grotesk', sans-serif;
-  font-weight: 500;
-  font-size: 32px;
-  margin: 0 0 6px;
-  color: #15141D;
-}
-
-.about-founder-role {
-  font-family: 'Clash Grotesk', sans-serif;
-  font-size: 16px;
-  color: #666666;
-  margin: 0 0 16px;
-}
-
 .about-team-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 36px 24px;
+  gap: 24px 20px;
 }
 
 .about-member {
+  display: block;
   text-align: left;
 }
 
 .about-member-photo {
   width: 100%;
-  aspect-ratio: 4 / 5;
-  border-radius: 12px;
-  background: #D8D8D8 center / cover no-repeat;
+  aspect-ratio: 265 / 337;
+  border-radius: 14px;
+  overflow: hidden;
+  background-color: #F5F5F0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   margin: 0 0 14px;
 }
 
@@ -1736,19 +1845,19 @@ a.scard {
 }
 
 .portfolio-page {
-  padding: 48px 0 80px;
+  padding: 148px 0 80px;
 }
 
 .portfolio-page-inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 60px;
 }
 
 .portfolio-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 28px;
   margin-bottom: 36px;
 }
 
@@ -1761,9 +1870,9 @@ a.scard {
   background: transparent;
   border: 0.5px solid #15141D;
   border-radius: 12px;
-  width: 210px;
+  width: 100%;
   min-height: 62px;
-  padding: 10px 16px;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1822,7 +1931,7 @@ a.scard {
 
 .pgrid-title {
   font-family: 'Clash Grotesk', sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 22px;
   line-height: 1.15;
   margin: 0 0 6px;
@@ -2254,39 +2363,45 @@ a.scard {
 }
 
 .case-page {
-  padding: 150px 0 0;
+  padding: 220px 0 0;
 }
 
 .case-page-inner {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 0 80px;
+  padding: 0 76px;
 }
 
 .case-back {
   display: inline-flex;
   align-items: center;
   color: var(--otr-blue-link);
-  margin-bottom: 40px;
+  margin-bottom: 8px;
+}
+
+.case-back svg {
+  width: 47px;
+  height: 53px;
 }
 
 .case-title {
   font-family: 'Clash Grotesk', sans-serif;
-  font-weight: 500;
-  font-size: 48px;
-  line-height: 1.05;
+  font-weight: 400;
+  font-size: 70px;
+  line-height: 60px;
   text-transform: uppercase;
-  color: var(--otr-dark);
-  margin: 0 0 16px;
+  color: #000E1F;
+  margin: 0 0 10px;
 }
 
 .case-subtitle {
   font-family: 'Clash Grotesk', sans-serif;
-  font-weight: 600;
-  font-size: 17px;
-  letter-spacing: 0.03em;
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 50px;
+  letter-spacing: 0;
   text-transform: uppercase;
-  color: var(--otr-dark);
+  color: #000E1F;
   margin: 0 0 56px;
 }
 
@@ -2341,25 +2456,21 @@ a.scard {
 .case-hero-mute.is-unmuted .icon-muted { display: none; }
 .case-hero-mute.is-unmuted .icon-unmuted { display: block; }
 
-/* Segundo video del caso (solo Argentina Fintech Forum 2025).
-   Figma: bloque gris redondeado 1133×533 debajo del texto, video 746×467 centrado. */
+/* Segundo video AFF: misma placa full-bleed que el hero. */
 .case-hero-secondary {
   position: relative;
-  width: 100%;
-  max-width: 1133px;
-  aspect-ratio: 1133 / 533;
+  width: 100vw;
+  max-width: 100vw;
+  margin-left: calc(50% - 50vw);
+  aspect-ratio: 1280 / 550;
   background: #D9D9D9;
-  border-radius: 39px;
-  margin: 0 auto 80px;
+  margin-bottom: 0;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .case-hero-secondary video {
-  width: 65.8%;
-  height: 87.6%;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   display: block;
 }
@@ -2397,12 +2508,17 @@ a.scard {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 28px 64px;
+  margin-top: 64px;
 }
 
 .case-metrics--stack {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.case-body--split .case-metrics {
+  margin-top: 0;
 }
 
 .case-body p {
@@ -2510,6 +2626,10 @@ a.scard {
   padding: 0 12px;
 }
 
+a.case-chip:hover {
+  opacity: 0.82;
+}
+
 @media (max-width: 1100px) {
   .case-page-inner {
     padding: 0 40px;
@@ -2518,15 +2638,26 @@ a.scard {
 
 @media (max-width: 768px) {
   .case-page {
-    padding: 110px 0 0;
+    padding: 120px 0 0;
   }
 
   .case-page-inner {
     padding: 0 24px;
   }
 
+  .case-back svg {
+    width: 36px;
+    height: 40px;
+  }
+
   .case-title {
-    font-size: 32px;
+    font-size: 36px;
+    line-height: 1.05;
+  }
+
+  .case-subtitle {
+    font-size: 22px;
+    line-height: 1.2;
   }
 
   .case-body {
@@ -2539,13 +2670,7 @@ a.scard {
   }
 
   .case-hero-secondary {
-    border-radius: 20px;
     aspect-ratio: 16 / 10;
-  }
-
-  .case-hero-secondary video {
-    width: 90%;
-    height: 82%;
   }
 
   .case-chip {
@@ -2638,7 +2763,7 @@ a.scard {
 
 .blog-page-title {
   font-family: 'Clash Grotesk', sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 64px;
   line-height: 1;
   color: #15141D;
@@ -2647,10 +2772,47 @@ a.scard {
 
 .blog-page-subtitle {
   font-family: 'Clash Grotesk', sans-serif;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 24px;
   color: #15141D;
   margin: 0 0 56px;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 88px 30px;
+}
+
+.blog-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.blog-card-media {
+  width: 100%;
+  aspect-ratio: 534 / 226;
+  background: #D9D9D9;
+  margin: 0 0 16px;
+}
+
+.blog-card-title {
+  font-family: 'Clash Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.2;
+  color: #15141D;
+  margin: 0 0 4px;
+  text-transform: uppercase;
+}
+
+.blog-card-year {
+  font-family: 'Clash Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #888888;
+  margin: 0;
 }
 
 .blog-empty {
@@ -2866,20 +3028,12 @@ a.scard {
     grid-template-columns: 1fr;
   }
 
-  .about-values-grid {
-    grid-template-columns: 1fr;
-    gap: 40px;
+  .about-intro-text {
+    margin-left: 40px;
   }
 
-  .about-value--3 {
-    grid-column: 1;
-    grid-row: auto;
-    justify-self: start;
-    text-align: left;
-  }
-
-  .about-value--3 .about-value-body {
-    margin-left: 0;
+  .about-values-track {
+    padding: 0 40px;
   }
 
   .about-team-grid {
@@ -3026,8 +3180,8 @@ a.scard {
     padding-top: 16px;
   }
 
-  .navbar-solid {
-    padding: 16px 0 20px;
+  .navbar.is-scrolled {
+    padding-top: 10px;
   }
 
   .navbar-pill {
@@ -3092,7 +3246,8 @@ a.scard {
     font-size: 26px;
   }
 
-  .about-vision-text {
+  .about-vision-text,
+  .about-intro-text {
     margin-left: 24px;
   }
 
@@ -3104,14 +3259,38 @@ a.scard {
     font-size: 22px;
   }
 
-  .about-founder {
-    flex-direction: column;
-    align-items: flex-start;
+  .page-service .svc-block {
+    position: relative;
+    top: auto;
+    min-height: 0;
+    box-shadow: none;
   }
 
-  .about-founder-photo {
-    width: 160px;
-    height: 192px;
+  .page-service .svc-title {
+    position: static;
+    padding: 0;
+  }
+
+  .about-values-pin {
+    height: auto !important;
+  }
+
+  .about-values-sticky {
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+
+  .about-values-track {
+    flex-direction: column;
+    gap: 48px;
+    padding: 72px 24px;
+    transform: none !important;
+  }
+
+  .about-value {
+    flex: none;
+    width: 100%;
   }
 
   .about-team-grid {
@@ -3122,16 +3301,17 @@ a.scard {
   .about-member-photo {
     width: 100%;
     height: auto;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 265 / 337;
   }
 
   .portfolio-filters {
+    grid-template-columns: 1fr;
     gap: 8px;
   }
 
   .portfolio-filter {
-    width: auto;
-    min-height: auto;
+    width: 100%;
+    min-height: 48px;
     font-size: 11px;
     padding: 8px 12px;
   }
@@ -3387,6 +3567,11 @@ a.scard {
 
   .blog-page-title {
     font-size: 40px;
+  }
+
+  .blog-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
   }
 
   .blog-empty {
