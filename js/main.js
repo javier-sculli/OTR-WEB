@@ -96,6 +96,18 @@ document.querySelectorAll('.faq-item').forEach(item => {
   });
 });
 
+const jumpToHash = () => {
+  const id = decodeURIComponent(location.hash.replace(/^#/, ''));
+  if (!id) return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'auto', block: 'start' });
+};
+if (location.hash) {
+  window.addEventListener('load', jumpToHash);
+  requestAnimationFrame(jumpToHash);
+}
+
 // Smooth scroll for nav links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function(e) {
@@ -130,6 +142,17 @@ if ('IntersectionObserver' in window) {
 
 const prefersReducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+document.querySelectorAll('.hero-video, .about-hero-video').forEach((video) => {
+  const tryPlay = () => {
+    if (prefersReducedMotion()) return;
+    const play = video.play();
+    if (play && typeof play.catch === 'function') play.catch(() => {});
+  };
+  if (video.readyState >= 2) tryPlay();
+  video.addEventListener('loadeddata', tryPlay);
+  video.addEventListener('canplay', tryPlay);
+});
 
 const isMobileMotion = () => window.matchMedia('(max-width: 768px)').matches;
 
@@ -338,11 +361,8 @@ if (portfolioFilters.length && portfolioCards.length) {
   }
 }
 
-// Contact form — no backend yet, so "Enviar" opens the visitor's email
-// client with the fields pre-filled. Swap for a real fetch() submit (with
-// this as the mailto fallback if it fails) once there's an endpoint to send to.
-// Reusable so both the /contact.html page form and the footer modal's copy
-// of the same form share one implementation.
+// Contact form — POST to FormSubmit (hola@ontherocks.com.ar).
+// If the request fails, fall back to mailto so the visitor can still send.
 function wireContactForm(contactForm) {
   if (!contactForm || contactForm.dataset.wired) return;
   contactForm.dataset.wired = 'true';
@@ -358,7 +378,13 @@ function wireContactForm(contactForm) {
     if (kind) statusEl.classList.add(kind);
   };
 
-  contactForm.addEventListener('submit', (e) => {
+  const openMailto = (reason, name, email, message) => {
+    const subject = encodeURIComponent(`${reason} — ${name}`.trim());
+    const body = encodeURIComponent(`Nombre: ${name}\nEmail: ${email}\n\n${message}`);
+    window.location.href = `mailto:hola@ontherocks.com.ar?subject=${subject}&body=${body}`;
+  };
+
+  contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (isSubmitting) return;
 
@@ -370,22 +396,45 @@ function wireContactForm(contactForm) {
 
     isSubmitting = true;
     if (submitBtn) submitBtn.disabled = true;
+    setStatus('Enviando…');
 
     const reason = contactForm.querySelector('input[name="reason"]:checked')?.value || '';
-    const name = contactForm.querySelector('input[name="name"]')?.value || '';
-    const email = contactForm.querySelector('input[name="email"]')?.value || '';
-    const message = contactForm.querySelector('textarea[name="message"]')?.value || '';
+    const name = contactForm.querySelector('input[name="name"]')?.value.trim() || '';
+    const email = contactForm.querySelector('input[name="email"]')?.value.trim() || '';
+    const message = contactForm.querySelector('textarea[name="message"]')?.value.trim() || '';
 
-    const subject = encodeURIComponent(`${reason} — ${name}`.trim());
-    const body = encodeURIComponent(`Nombre: ${name}\nEmail: ${email}\n\n${message}`);
-    window.location.href = `mailto:hola@ontherocks.com.ar?subject=${subject}&body=${body}`;
-
-    setStatus('Se abrió tu cliente de correo con estos datos completados. Si no pasó nada, escribinos directamente a hola@ontherocks.com.ar.', 'is-success');
-
-    window.setTimeout(() => {
+    try {
+      const res = await fetch('https://formsubmit.co/ajax/hola@ontherocks.com.ar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          motivo: reason,
+          _subject: `${reason} — ${name}`.trim(),
+          _template: 'table',
+          _captcha: 'false'
+        })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.success === 'false' || data.success === false) {
+        throw new Error(data.message || 'send_failed');
+      }
+      contactForm.reset();
+      const defaultReason = contactForm.querySelector('input[name="reason"]');
+      if (defaultReason) defaultReason.checked = true;
+      setStatus('Listo. Te vamos a responder a este mail en menos de 48 hs.', 'is-success');
+    } catch (err) {
+      openMailto(reason, name, email, message);
+      setStatus('No pudimos enviarlo desde el sitio. Se abrió tu cliente de correo como alternativa. Si no pasó nada, escribinos a hola@ontherocks.com.ar.', 'is-error');
+    } finally {
       isSubmitting = false;
       if (submitBtn) submitBtn.disabled = false;
-    }, 1500);
+    }
   });
 }
 
@@ -454,7 +503,7 @@ if (contactTriggers.length && footerSection) {
           </div>
         </div>
 
-        <p class="contact-form-note">Al enviar se abre tu cliente de correo con estos datos ya completados.</p>
+        <p class="contact-form-note">Al enviar, el mensaje llega a hola@ontherocks.com.ar. Respondemos en menos de 48 hs.</p>
 
         <button type="submit" class="contact-submit">
           Enviar

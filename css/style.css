@@ -1432,6 +1432,8 @@ a.scard {
   position: sticky;
   top: 110px;
   min-height: calc(100vh - 110px);
+  display: flex;
+  flex-direction: column;
   box-shadow: 0 -16px 40px rgba(21, 20, 29, 0.08);
 }
 
@@ -1443,19 +1445,21 @@ a.scard {
 
 .svc-inner {
   max-width: 1280px;
+  width: 100%;
   margin: 0 auto;
-  padding: 100px 80px 110px;
+  padding: 72px 80px 48px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .page-service .svc-title {
-  position: sticky;
-  top: 126px;
-  z-index: 2;
-  padding: 8px 0 16px;
+  position: static;
+  padding: 0 0 8px;
 }
 
-.page-service .svc-block--white .svc-title { background: #FFFFFF; }
-.page-service .svc-block--gray .svc-title { background: #D9D9D9; }
+.page-service .svc-block--white .svc-title { background: transparent; }
+.page-service .svc-block--gray .svc-title { background: transparent; }
 
 .svc-title {
   font-family: 'Clash Grotesk', sans-serif;
@@ -1472,7 +1476,9 @@ a.scard {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-top: 40px;
+  justify-content: space-between;
+  flex: 1;
+  margin-top: 32px;
   margin-left: 28%;
 }
 
@@ -1508,6 +1514,7 @@ a.scard {
   gap: 12px;
   min-width: 200px;
   height: 36px;
+  margin-top: auto;
   padding: 0 14px 0 18px;
   background: #15141D;
   color: #FFFFFF;
@@ -1656,7 +1663,7 @@ a.scard {
 }
 
 .about-values-pin {
-  height: 280vh;
+  height: 200vh;
 }
 
 .about-values-sticky {
@@ -2722,6 +2729,13 @@ a.case-chip:hover {
   margin-bottom: 44px;
 }
 
+.legal-updated {
+  font-family: 'Clash Grotesk', sans-serif;
+  font-size: 14px;
+  color: #888888;
+  margin: 0 0 36px;
+}
+
 .legal-section {
   margin-bottom: 32px;
 }
@@ -2958,9 +2972,25 @@ a.case-chip:hover {
 }
 
 @media (max-width: 1100px) {
+  .navbar {
+    padding-top: 16px;
+  }
+
+  .navbar.is-scrolled {
+    padding-top: 10px;
+  }
+
   .navbar-pill {
     width: calc(100% - 40px);
     padding: 0 24px;
+  }
+
+  .navbar-links {
+    display: none;
+  }
+
+  .navbar-menu-toggle {
+    display: flex;
   }
 
   .hero-content {
