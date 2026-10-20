@@ -363,7 +363,8 @@ img {
 
 .work-inner {
   position: relative;
-  width: 1280px;
+  width: 100%;
+  max-width: 1280px;
   height: 693px;
   margin: 0 auto;
 }
@@ -393,57 +394,38 @@ img {
 
 /* Figma: "Somos la agencia de referencia..." — left:72px, top:866px (page) = top:173px (section) */
 /* width:1124px, height:110px, font-size:60px, line-height:55px, text-align:right */
-.work-heading-line1 {
-  font-family: 'Clash Grotesk', sans-serif;
-  font-weight: 400;
-  font-size: 60px;
-  line-height: 55px;
-  color: #FFFFFF;
-  text-align: left;
-  position: absolute;
-  left: 80px;
-  top: 173px;
-  width: 1124px;
-  height: 110px;
-}
-
-/* Figma 1:17 — bloque izquierdo; la cola va a la derecha (1:22, x:576) */
-.work-heading-line2 {
-  font-family: 'Clash Grotesk', sans-serif;
-  font-weight: 400;
-  font-size: 60px;
-  line-height: 55px;
-  color: #FFFFFF;
-  text-align: left;
-  position: absolute;
-  left: 80px;
-  top: 228px;
-  width: 1124px;
-  height: 55px;
-}
-
-.work-heading-line3 {
-  font-family: 'Clash Grotesk', sans-serif;
-  font-weight: 400;
-  font-size: 60px;
-  line-height: 55px;
-  color: #FFFFFF;
-  text-align: right;
-  position: absolute;
-  left: 80px;
-  top: 277px;
-  width: 1124px;
-  height: 55px;
-}
-
+/* Figma: dos líneas blancas a la izquierda + cola azul a la derecha */
 .work-heading-line1,
 .work-heading-line2,
 .work-heading-line3 {
-  transition: color 0.3s ease;
+  font-family: 'Clash Grotesk', sans-serif;
+  font-weight: 400;
+  font-size: 60px;
+  line-height: 55px;
+  position: absolute;
+  left: 80px;
+  right: 80px;
+  width: auto;
+  height: 55px;
+  white-space: nowrap;
 }
 
-.work-heading:hover .work-heading-line3 {
+.work-heading-line1 {
+  color: #FFFFFF;
+  text-align: left;
+  top: 181px;
+}
+
+.work-heading-line2 {
+  color: #FFFFFF;
+  text-align: left;
+  top: 236px;
+}
+
+.work-heading-line3 {
   color: var(--otr-blue-link);
+  text-align: right;
+  top: 291px;
 }
 
 /* Figma: "Ayudamos a compañías..." — left:80px, top:1192px (page) = top:499px (section) */
@@ -501,12 +483,12 @@ img {
   height: 452px;
 }
 
-/* ---- BOTTOM: ARGY + ByBit a todo el ancho, apiladas (Figma Home 1:7) ---- */
+/* ---- BOTTOM: ARGY y ByBit full-bleed, una debajo de la otra (Figma) ---- */
 .portfolio-bottom-row {
   display: flex;
   flex-direction: column;
+  flex-wrap: nowrap;
   width: 100%;
-  height: auto;
 }
 
 /* ---- SHARED PCARD BASE ---- */
@@ -527,7 +509,10 @@ img {
 
 .pcard-4,
 .pcard-5 {
+  display: block;
+  flex: 0 0 auto;
   width: 100%;
+  max-width: 100%;
   height: 227px;
 }
 
@@ -585,9 +570,10 @@ img {
   transition: opacity 0.35s ease;
 }
 
-/* ARGY home: la foto llega a 1280×227 (ancho de fila). En la card 427px se ve el tercio izquierdo. */
-.pcard-4 .pcard-photo {
-  background-position: left center;
+.pcard-4 .pcard-photo,
+.pcard-5 .pcard-photo {
+  background-size: cover;
+  background-position: center;
 }
 
 .pcard:hover .pcard-photo {
@@ -978,14 +964,15 @@ a.scard {
   width: auto;
   height: auto;
   object-fit: contain;
-  opacity: 0.92;
+  image-rendering: auto;
+  -ms-interpolation-mode: bicubic;
   animation: logoDrift 7.5s ease-in-out infinite;
   animation-delay: calc(var(--logo-i, 0) * 0.18s);
 }
 
 @keyframes logoDrift {
-  0%, 100% { opacity: 0.7; transform: translateY(0); }
-  50% { opacity: 1; transform: translateY(-5px); }
+  0%, 100% { opacity: 0.72; }
+  50% { opacity: 1; }
 }
 
 /* Text-only logo cells */
@@ -2996,19 +2983,12 @@ a.case-chip:hover {
     width: 87.8%;
   }
 
-  .work-heading-line1 {
-    left: 5.6%;
-    width: 87.8%;
-  }
-
-  .work-heading-line2 {
-    left: 5.6%;
-    width: 87.8%;
-  }
-
+  .work-heading-line1,
+  .work-heading-line2,
   .work-heading-line3 {
     left: 6.25%;
-    width: 87.8%;
+    right: 6.25%;
+    width: auto;
   }
 
   .work-body {
@@ -3022,6 +3002,11 @@ a.case-chip:hover {
   .portfolio-top-row,
   .portfolio-bottom-row {
     width: 100%;
+  }
+
+  .portfolio-bottom-row {
+    display: flex;
+    flex-direction: column;
   }
 
   .pcard-1, .pcard-2, .pcard-3 {
@@ -3321,7 +3306,16 @@ a.case-chip:hover {
     font-size: 36px;
     line-height: 40px;
     margin-top: 24px;
+    white-space: normal;
+  }
+
+  .work-heading-line1,
+  .work-heading-line2 {
     text-align: left;
+  }
+
+  .work-heading-line3 {
+    text-align: right;
   }
 
   .work-body {
