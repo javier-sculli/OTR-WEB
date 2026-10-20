@@ -402,9 +402,9 @@ function wireContactForm(contactForm) {
     setStatus('Enviando…');
 
     const reason = contactForm.querySelector('input[name="reason"]:checked')?.value || '';
-    const name = contactForm.querySelector('input[name="name"]')?.value.trim() || '';
     const email = contactForm.querySelector('input[name="email"]')?.value.trim() || '';
-    const message = contactForm.querySelector('textarea[name="message"]')?.value.trim() || '';
+    const name = contactForm.querySelector('input[name="name"]')?.value.trim() || (email.split('@')[0] || 'Contacto web');
+    const message = contactForm.querySelector('textarea[name="message"]')?.value.trim() || `Consulta desde la web — ${reason}`;
 
     try {
       const res = await fetch('https://formsubmit.co/ajax/jt@ontherocks.tech', {
@@ -491,29 +491,16 @@ if (contactTriggers.length && footerSection) {
 
         <p class="contact-form-hint">Dejanos tus datos para que podamos contactarte. Respondemos en menos de 48 hs.</p>
 
-        <div class="contact-form-fields">
-          <div class="contact-field">
-            <label for="cfm-name">Nombre y apellido</label>
-            <input type="text" name="name" id="cfm-name" autocomplete="name" required>
-          </div>
-          <div class="contact-field">
-            <label for="cfm-email">Email</label>
-            <input type="email" name="email" id="cfm-email" autocomplete="email" required>
-          </div>
-          <div class="contact-field">
-            <label for="cfm-message">Mensaje</label>
-            <textarea name="message" id="cfm-message" rows="3" placeholder="Contanos sobre tu proyecto" required></textarea>
-          </div>
+        <div class="contact-form-bar">
+          <label class="sr-only" for="cfm-email">Email</label>
+          <input type="email" name="email" id="cfm-email" autocomplete="email" required>
+          <input type="text" name="name" id="cfm-name" autocomplete="name" class="sr-only" tabindex="-1">
+          <textarea name="message" id="cfm-message" class="sr-only" tabindex="-1"></textarea>
         </div>
 
-        <p class="contact-form-note">Al enviar, el mensaje llega a jt@ontherocks.tech. Respondemos en menos de 48 hs.</p>
-
-        <button type="submit" class="contact-submit">
-          Enviar
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-            <path d="M3 9L9 3M9 3H4.5M9 3V7.5" stroke="#15141D" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
+        <div class="contact-form-actions">
+          <button type="submit" class="contact-submit">Enviar</button>
+        </div>
 
         <p class="contact-form-status" role="status" aria-live="polite"></p>
       </form>
