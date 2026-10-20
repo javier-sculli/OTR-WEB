@@ -176,12 +176,9 @@ const getViewportBox = (el) => {
 };
 
 // Footer wordmark — wipe ligado al scroll (Wolff Olins).
-// El logotipo está al fondo de la página: el reveal corre mientras entra
-// por el borde inferior, no cuando cruza el tercio superior del viewport.
-const supportsViewTimeline = CSS.supports && CSS.supports('animation-timeline', 'view()');
+// Siempre por JS: animation-timeline:view() dejaba el logo clippeado en varios browsers.
 const wordmarks = document.querySelectorAll('.contact-logotype');
 const updateWordmarkReveal = () => {
-  if (supportsViewTimeline) return;
   const reduced = prefersReducedMotion();
   const vh = window.innerHeight;
   wordmarks.forEach(el => {
@@ -189,10 +186,16 @@ const updateWordmarkReveal = () => {
       el.style.setProperty('--wordmark-reveal', '1');
       return;
     }
-    const box = getViewportBox(el);
-    const h = box.height || 124;
-    const start = vh + 12;
-    const end = vh - h;
+    const scrolled = (window.scrollY || document.documentElement.scrollTop || 0) + vh;
+    const docH = document.documentElement.scrollHeight;
+    if (scrolled >= docH - 48) {
+      el.style.setProperty('--wordmark-reveal', '1');
+      return;
+    }
+    const section = el.closest('.section-contact') || el;
+    const box = getViewportBox(section);
+    const start = vh * 0.88;
+    const end = Math.max(80, vh * 0.28);
     const progress = (start - box.top) / (start - end);
     el.style.setProperty('--wordmark-reveal', String(Math.min(1, Math.max(0, progress))));
   });
@@ -361,7 +364,7 @@ if (portfolioFilters.length && portfolioCards.length) {
   }
 }
 
-// Contact form — POST to FormSubmit (hola@ontherocks.com.ar).
+// Contact form — POST to FormSubmit (jt@ontherocks.tech).
 // If the request fails, fall back to mailto so the visitor can still send.
 function wireContactForm(contactForm) {
   if (!contactForm || contactForm.dataset.wired) return;
@@ -381,7 +384,7 @@ function wireContactForm(contactForm) {
   const openMailto = (reason, name, email, message) => {
     const subject = encodeURIComponent(`${reason} — ${name}`.trim());
     const body = encodeURIComponent(`Nombre: ${name}\nEmail: ${email}\n\n${message}`);
-    window.location.href = `mailto:hola@ontherocks.com.ar?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:jt@ontherocks.tech?subject=${subject}&body=${body}`;
   };
 
   contactForm.addEventListener('submit', async (e) => {
@@ -404,7 +407,7 @@ function wireContactForm(contactForm) {
     const message = contactForm.querySelector('textarea[name="message"]')?.value.trim() || '';
 
     try {
-      const res = await fetch('https://formsubmit.co/ajax/hola@ontherocks.com.ar', {
+      const res = await fetch('https://formsubmit.co/ajax/jt@ontherocks.tech', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -430,7 +433,7 @@ function wireContactForm(contactForm) {
       setStatus('Listo. Te vamos a responder a este mail en menos de 48 hs.', 'is-success');
     } catch (err) {
       openMailto(reason, name, email, message);
-      setStatus('No pudimos enviarlo desde el sitio. Se abrió tu cliente de correo como alternativa. Si no pasó nada, escribinos a hola@ontherocks.com.ar.', 'is-error');
+      setStatus('No pudimos enviarlo desde el sitio. Se abrió tu cliente de correo como alternativa. Si no pasó nada, escribinos a jt@ontherocks.tech.', 'is-error');
     } finally {
       isSubmitting = false;
       if (submitBtn) submitBtn.disabled = false;
@@ -503,7 +506,7 @@ if (contactTriggers.length && footerSection) {
           </div>
         </div>
 
-        <p class="contact-form-note">Al enviar, el mensaje llega a hola@ontherocks.com.ar. Respondemos en menos de 48 hs.</p>
+        <p class="contact-form-note">Al enviar, el mensaje llega a jt@ontherocks.tech. Respondemos en menos de 48 hs.</p>
 
         <button type="submit" class="contact-submit">
           Enviar
